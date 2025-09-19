@@ -1,4 +1,4 @@
-name: ci
+name: cicd
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
       - src/**
 
 jobs:
-  docker:
-    runs-on: self-hosted
+  ci:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,3 +31,15 @@ jobs:
           tags: |
             syposa1/python-app:latest
             syposa1/python-app:${{ env.SHORT_SHA }}
+
+  cd:
+    needs: ci
+    runs-on: self-hosted
+    steps:
+     - name: Argocd app sync
+       uses: actions/checkout@v4
+
+     - name: Get short SHA
+       id: vars
+       run: argocd login argocd-server.argocd --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_PASSWORD }}
+            argocd app sync python-app 
