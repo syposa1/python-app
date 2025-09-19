@@ -36,10 +36,14 @@ jobs:
     needs: ci
     runs-on: self-hosted
     steps:
-     - name: Argocd app sync
+     - name: Install argocd
+       shell: bash
+       run: curl -ksSL -o argocd https://argocd-server.argocd/download/argocd-linux-amd64
+       chmod +x argocd
+       mv ./argocd /usr/local/bin/argocd
        uses: actions/checkout@v4
 
-     - name: Get short SHA
+     - name: Argocd app sync
        id: vars
        run: argocd login argocd-server.argocd --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_PASSWORD }}
             argocd app sync python-app 
