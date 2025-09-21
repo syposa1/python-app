@@ -31,11 +31,26 @@ jobs:
           tags: |
             syposa1/python-app:latest
             syposa1/python-app:${{ env.SHORT_SHA }}
+    outputs:
+      commit_id: ${{ env.SHORT_SHA }}            
 
   cd:
     needs: ci
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v3
+      - name: Modify values file
+        shell: bash
+        run: |
+          echo ${{needs.ci.outputs.commit_id}}
+          pip install yq
+          yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/python-app/values.yaml
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with: 
+          message: 'Updates values.yaml with commit ${{needs.ci.outputs.commit_id}}'
+
       - name: Checkout code
         uses: actions/checkout@v4
 
