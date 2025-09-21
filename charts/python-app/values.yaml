@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: syposa1/python-app
   pullPolicy: IfNotPresent
-  tag: "1cb2f0"
+  tag: "eb5614"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
